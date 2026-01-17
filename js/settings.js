@@ -134,7 +134,7 @@ function handleMusicPreview() {
 
     musicPreviewAudio.play().then(() => {
         setMusicPreviewState({
-            message: `Đang phát: ${selectedLabel}`,
+            message: Now playing: ${selectedLabel}`,
             isPlaying: true
         });
     }).catch(error => {
