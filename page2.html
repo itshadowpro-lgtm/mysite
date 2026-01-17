@@ -1,0 +1,422 @@
+<html lang="en">
+<head>
+<meta charset="utf-8"></head><body>﻿
+
+
+
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>It's All About Birthday 🎁</title>
+    <meta name="language" content="en">
+    <meta name="description" content="">
+
+    <!-- Favicon and Icons -->
+    <link rel="icon" href="images/logo.png" type="image/png">
+    <link rel="apple-touch-icon" href="image/logo.png">
+
+    <!-- Open Graph Meta Tags -->
+    <meta property="og:title" content="It's All About Birthday 🎁">
+    <meta property="og:description" content="Một món quà đầy yêu thương đang chờ bạn khám phá! Nhấn để xem lời chúc đặc biệt!">
+    <meta property="og:image" content="image/logo.png">
+    <!-- <meta property="og:url" content="https://happybirthdaydeargift.vercel.app/?websiteId=686d4ef53c910ba1bee5ec5c"> -->
+    <meta property="og:type" content="website">
+
+  
+    <link rel="icon" type="image/x-icon" href="../cdn.jsdelivr.net/gh/sun0225SUN/photos/img/20210715233345.png">
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="">
+    <link href="https://fonts.googleapis.com/css?family=Pacifico&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="../www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="../www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+
+ <style>
+       /* FORCE SHOW MUSIC SECTION */
+[data-i18n="music"],
+#backgroundMusic,
+#musicPreviewButton {
+    display: block !important;
+}
+
+        /* Hide countdown settings */
+        [data-i18n="countdown"],
+        #countdownTime {
+            display: none !important;
+        }
+
+
+         /* === Hide Gift Image section === */
+    [data-i18n="gift"],
+    #giftImage {
+        display: none !important;
+    }
+
+    /* === Hide "Hiển thị sách" (Enable Book) === */
+    #enableBook,
+    [for="enableBook"] {
+        display: none !important;
+    }
+
+    /* === Hide Book Settings section === */
+    #bookSettingsSection {
+        display: none !important;
+    }
+
+    /* === Hide QR Save + Expiry + Follow section === */
+    #isSave,
+    [for="isSave"] {
+        display: none !important;
+    }
+
+    /* The yellow box group */
+    .settings-p {
+        display: none !important;
+    }
+
+   
+    /* Hide entire empty settings containers */
+    .settings-section:empty,
+    
+
+    /* Hide leftover labels and text related to removed fields */
+    
+    [data-i18n="countdownTime"],
+    [data-i18n="giftImage"],
+    [data-i18n="countdown"],
+   
+    [data-i18n="gift"] {
+        display: none !important;
+    }
+
+    /* Hide leftover rows directly */
+   
+    #countdownTime,
+    #giftImage {
+        display: none !important;
+    }
+
+
+/* Hide any empty form-group containers */
+.form-group:empty,
+
+
+
+/* Also hide empty settings sections again */
+.settings-section:empty {
+    display: none !important;
+}
+/* ---------------------------------------
+   HIDE INDIVIDUAL SETTINGS SECTIONS
+---------------------------------------- */
+
+
+
+/* Countdown section */
+.settings-section:has(#countdownTime) {
+    display: none !important;
+}
+
+/* Gift Image section */
+.settings-section:has(#giftImage) {
+    display: none !important;
+}
+
+/* Enable Book dropdown + entire book section */
+.settings-section:has(#enableBook),
+#bookSettingsSection {
+    display: none !important;
+}
+
+/* QR / Expiry / Follow block */
+.settings-p,
+#isSave,
+[for="isSave"] {
+    display: none !important;
+}
+
+/* ---------------------------------------
+   CLEAN UP LEFTOVER EMPTY SECTIONS
+---------------------------------------- */
+
+/* Hide any .settings-section with no visible children */
+.settings-section:not(:has(input, select, button, textarea, .color-theme-btn)) {
+    display: none !important;
+}
+
+
+
+</style>
+
+    
+  
+  
+
+             
+
+       
+
+
+    
+    <canvas id="matrix-rain" style="display: none;"></canvas>
+    <canvas style="position:absolute;width:100%;height:100%;z-index:9999;display:none;" class="canvas"></canvas>
+  <div class="overlay">
+    <div class="stars-container" id="starsContainer"></div>
+<audio id="birthdayAudio" src="audio/happy-birthday.mp3"></audio>
+
+    <img id="gift-image"
+         src=""
+         style="display:none; position:absolute; top:50%; left:50%;
+         transform:translate(-50%, -50%); z-index:20000; max-width:80%; max-height:80%;">  
+
+    <div id="gif-hint"
+         style="display:none; position:absolute; top:50%; left:calc(50% + 300px);
+         transform:translateY(-50%); color:white; font-size:18px;
+         font-family: 'Arial'; z-index:20001;">
+         Click this GIF to Go to The Next Page →
+    </div>
+
+
+      
+        <div class="content-display" id="contentDisplay">
+            <p id="contentText"></p>
+        </div>
+        <div class="firework-container" id="fireworkContainer"></div>
+        <div class="book-container">
+            <div class="book" id="book"></div>
+        </div>
+<button class="music-control" id="musicControl" title="Play/Pause Music">
+            ▶
+        </button>
+
+        <button class="settings-button" id="settingsButton" title="Settings">
+            ⚙
+        </button>
+
+
+      
+       
+              
+           
+              
+              
+              
+              
+              
+              
+              
+              
+              
+                      <!-- Settings hint element -->
+        <div id="settingsHint" class="settings-hint">
+            <div class="hint-text" data-i18n="settingsHint">Click Here To Customize Your Settings.</div>
+        </div>
+
+        <div id="settingsModal" class="modal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 data-i18n="settings">⚙️ Webpage Setup</h2>
+                    <span class="close">×</span>
+                </div>
+                <div class="modal-body">
+                    <div class="settings-section">
+                        <h3 data-i18n="music">🎵 Sound Settings</h3>
+                        <div class="form-group">
+                            <label for="backgroundMusic" data-i18n="backgroundMusic">Background Music:</label>
+                            <div class="music-select-row">
+                                <select id="backgroundMusic">
+                                    <option value="" disabled="" selected="">ok so</option>
+                                </select>
+                                <button type="button" id="musicPreviewButton" class="music-preview-btn">▶ Listen to a Sample</button>
+                            </div>
+                            <span id="musicPreviewStatus" class="music-preview-status">Chọn bài nhạc rồi nhấn "Listen to a Sample"</span>
+                        </div>
+                    </div>
+              
+
+                    <div class="settings-section">
+                        <h3 data-i18n="countdown">⏰ Cài Đặt Thời Gian</h3>
+                        <div class="form-group">
+                            <label for="countdownTime" data-i18n="countdownTime">Thời Gian Đếm Ngược:</label>
+                            <select id="countdownTime">
+                                <option value="3" data-i18n="sec3">3 giây</option>
+                                <option value="5" data-i18n="sec5">5 giây</option>
+                                <option value="10" data-i18n="sec10">10 giây</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3 data-i18n="matrix">🌧️ Set The Rain Text Effect</h3>
+                        <div class="form-group">
+                            <label for="matrixText" data-i18n="matrixText">Main text rain text:</label>
+                            <input type="text" id="matrixText" value="HAPPYBIRTHDAY" placeholder="Enter Text For The Text Rain Effect." data-i18n-placeholder="matrixText">
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="colorTheme">Choose A Colour:</label>
+                            <div class="color-theme-buttons">
+                                <button type="button" class="color-theme-btn active" data-theme="pink">
+                                    <div class="color-preview pink-preview"></div>
+                                    <span data-i18n="pinkTheme">Sweet Pink</span>
+                                </button>
+                                <button type="button" class="color-theme-btn" data-theme="blue">
+                                    <div class="color-preview blue-preview"></div>
+                                    <span data-i18n="blueTheme">Cool Blue</span>
+                                </button>
+                                <button type="button" class="color-theme-btn" data-theme="purple">
+                                    <div class="color-preview purple-preview"></div>
+                                    <span data-i18n="purpleTheme">Dreamy Purple</span>
+                                </button>
+                                <button type="button" class="color-theme-btn" data-theme="custom">
+                                    <div class="color-preview custom-preview"></div>
+                                    <span data-i18n="customTheme">Customize Colours</span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-row" id="customColorSection" style="display: none;">
+                            <div class="form-group">
+                                <label for="matrixColor1" data-i18n="matrixColor1">Rain color, letter 1:</label>
+                                <input type="color" id="matrixColor1" value="#ff69b4">
+                            </div>
+                            <div class="form-group">
+                                <label for="matrixColor2" data-i18n="matrixColor2">Rain color, letter 2:</label>
+                                <input type="color" id="matrixColor2" value="#ff1493">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3 data-i18n="sequence">✨ Set your preferred font</h3>
+                        <div class="form-group">
+                            <label for="sequenceText" data-i18n="sequenceText">Main text content:</label>
+                            <span data-i18n="noteSequence" style="color: rgb(132, 132, 132); font-weight: normal; font-size: 12px; display: block; margin-bottom: 5px;">
+                                Note: Use a | symbol to separate words; avoid having a single line that is too long.
+                            </span>
+                            <input type="text" id="sequenceText" value="HAPPY|BIRTHDAY|MY|CUTEE|LITTLE|SWARALI|❤" placeholder="Example:HAPPY BIRTHDAY..." data-i18n-placeholder="sequenceText">
+                        </div>
+                        <div class="form-group" id="sequenceColorSection" style="display: none;">
+                            <label for="sequenceColor" data-i18n="sequenceColor">Main text color:</label>
+                            <input type="color" id="sequenceColor" value="#ff69b4">
+                        </div>
+                    </div>
+
+                    <div class="settings-section">
+                        <h3 data-i18n="gift">🎁 Cài Đặt Hình Động</h3>
+                        <div class="form-group">
+                            <label for="giftImage" data-i18n="giftImage">Hình Động (tùy chọn):</label>
+                            <select id="giftImage">
+                                <option value="" data-i18n="noGif">Không có</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="enableBook" data-i18n="enableBook">Hiển thị sách:</label>
+                        <select id="enableBook">
+                            <option value="true" data-i18n="on">Bật</option>
+                            <option value="false" data-i18n="off">Tắt</option>
+                        </select>
+                    </div>
+                    <div class="settings-section" id="bookSettingsSection">
+                        <h3 data-i18n="book">📖 Cài Đặt Trang Sách</h3>
+                        <div id="pageConfigs">
+                        </div>
+                        <div class="form-group">
+                            <label for="enableHeart" data-i18n="enableHeart">Hiển thị hiệu ứng trái tim:</label>
+                            <select id="enableHeart">
+                                <option value="true" data-i18n="on">Bật</option>
+                                <option value="false" data-i18n="off">Tắt</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <label for="isSave" data-i18n="isSave">Lưu QR vĩnh viễn:</label>
+                        
+                    </div>
+                    <div class="settings-p" style="margin-bottom: 12px; background: #fff8e1; color: #b26a00; border-radius: 7px; padding: 10px 14px; font-size: 15px; box-shadow: 0 1px 6px rgba(0,0,0,0.04);">
+                        <div class="settings-p" style="margin-bottom: 4px;">
+                            ⏳ Hạn sử dụng là <b id="expireDate">30 ngày</b>
+                        </div>
+                        <div data-i18n="followNote" class="settings-p">
+                            🥰 Hãy <a href="" target="_blank" style="color:#ff0050;font-weight:bold;text-decoration:underline;">follow
+                                mình</a> để cập nhật những website mới nhất, nhanh nhất nhé!
+                        </div>
+                        <div class="settings-p" data-i18n="notVietnamWarning">
+                            
+                        </div>
+                    </div>
+                    <button id="applySettings" class="apply-settings-btn" data-i18n="apply">🎉 Apply Settings</button>
+                </div>
+            </div>
+        </div>
+
+        <audio id="birthdayAudio" loop="">
+            <source src="" type="audio/mpeg">
+            Your browser does not support the audio element.
+        </audio>
+
+        
+
+        <div id="orientation-lock">
+            <div class="phone-icon">
+                <img src="images/screen.png" alt="">
+            </div>
+        </div>
+        <!-- Modal Payment-->
+        <div id="paymentModal" style="display:none; position:fixed; top:0;left:0;width:100vw;height:100vh;background:rgba(0,0,0,0.5);z-index:99999;">
+            <div style="position:relative; margin: 5% auto; width: 90%; max-width: 800px; background:white; padding:20px; border-radius:10px;">
+                <button onclick="document.getElementById('paymentModal').style.display='none'" style="position:absolute;top:10px;right:10px;">✖</button>
+                <iframe id="paymentIframe" style="width:100%; height:600px; border:none;"></iframe>
+            </div>
+        </div>
+        <!-- Nút Full màn hình, chỉ hiện trên Android -->
+        <button id="fullscreenBtn" style="
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    z-index: 990010;
+    padding: 10px 18px;
+    border-radius: 8px;
+    border: none;
+    background: #222;
+    color: #fff;
+    font-size: 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+    cursor: pointer;
+    display: none;
+">
+            <img style="
+    width: 20px;
+    height: 20px;
+    vertical-align: middle;
+" src="images/full.png" alt="">
+        </button>
+       
+        <script type="text/javascript">
+            // Bypass for developers
+            const keyName = 'key';
+            const keyValue = '9ac7ec230e0e4513578f309d6d3579ad';
+
+            // Handle via config
+            DisableDevtool({
+                tkName: keyName,
+                md5: keyValue,
+                interval: '100',
+            });
+        </script>
+       
+        
+       
+       
+        <script src="js/settings.js"></script>
+        
+        <script src="js/ui.js"></script>
+
+
+
+
+</div>
+   
+
+
+
+</body></html>

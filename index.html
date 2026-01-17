@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Birthday Page</title>
+
+<!-- FONT (INTER = clean & readable) -->
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+html, body {
+  margin: 0; padding: 0;
+  width: 100vw; height: 100vh;
+  overflow: hidden;
+  background: #000;
+  user-select: none;
+}
+
+/* BACKGROUND */
+#bg {
+  position: fixed;
+  width: 100vw; height: 100vh;
+  background-image: url('images/bghome.png');
+  background-size: cover;
+  background-position: center;
+  z-index: 0;
+}
+
+/* HEART ZONES */
+.hearts-left, .hearts-right {
+  position: fixed;
+  top: 0;
+  width: 25vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1;
+}
+.hearts-left { left: 0; }
+.hearts-right { right: 0; }
+
+/* LYRICS */
+#lyrics-mask {
+  position: fixed;
+  bottom: 170px;
+  width: 100vw;
+  height: 120px;
+  pointer-events: none;
+  z-index: 2;
+  mask-image: linear-gradient(to bottom,
+    rgba(0,0,0,0) 0%,
+    rgba(0,0,0,1) 20%,
+    rgba(0,0,0,1) 80%,
+    rgba(0,0,0,0) 100%);
+}
+
+#lyrics-container {
+  width: 100%; height: 120px;
+  display: flex; flex-direction: column;
+  justify-content: center; align-items: center;
+  color: white;
+  position: relative;
+}
+
+.lyric {
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  color: #fff;
+  letter-spacing: 0.4px;
+  max-width: 70%;
+  line-height: 1.25;
+  position: absolute;
+  transition: transform .45s ease, opacity .45s ease, font-size .45s ease;
+  text-shadow:
+    0 0 6px rgba(181,108,255,0.9),
+    0 0 12px rgba(181,108,255,0.7),
+    0 0 18px rgba(143,93,252,0.6),
+    0 0 26px rgba(143,93,252,0.4);
+}
+
+.lyric.active {
+  opacity: 1;
+  font-size: 30px;
+  transform: translateY(0) scale(1);
+  filter: brightness(1.25);
+}
+
+.lyric.faded {
+  opacity: .35;
+  font-size: 24px;
+  transform: scale(.88);
+}
+
+/* PLAYER */
+#player-area {
+  position: fixed;
+  bottom: 70px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 600px;
+  z-index: 3;
+}
+
+#player-stack {
+  position: relative;
+  display: flex;
+  width: 100%;
+}
+
+/* CIRCLE */
+#circle-wrap {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  height: 50px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#circle {
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  border: 3px solid #ff2ec6;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+}
+
+#circle svg {
+  width: 65%;
+  height: 65%;
+}
+
+/* LINES + BAR */
+#line-stack {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+}
+
+.line {
+  height: 2px;
+  background: rgba(255,150,230,0.7);
+  box-shadow: 0 0 6px rgba(255,80,200,0.4);
+  width: calc(100% - 46px);
+  margin-left: 46px;
+}
+
+.gap { height: 9px; }
+
+#bar-row {
+  width: calc(100% - 70px);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+#bar {
+  position: relative;
+  flex: 1;
+  height: 4px;
+  background: rgba(255,255,255,0.3);
+}
+
+#fill {
+  position: absolute;
+  top: 0; left: 0;
+  height: 4px;
+  width: 0%;
+  background: #ff2ec6;
+  box-shadow: 0 0 6px rgba(255,20,180,0.8);
+}
+
+#knob {
+  position: absolute;
+  top: 50%;
+  left: 0%;
+  width: 12px; height: 12px;
+  margin-top: -8px; /* moved up */
+  background: white;
+  border: 2px solid #ff2ec6;
+  border-radius: 50%;
+  transform: translateX(-50%);
+}
+
+#time {
+  color: white;
+  font-size: 15px;
+  white-space: nowrap;
+  text-shadow: 0 0 6px rgba(255,255,255,0.8);
+}
+/* NEXT BUTTON (container) */
+#next-btn {
+  position: fixed;
+  bottom: 35px;
+  right: 40px;
+  width: 90px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  pointer-events: auto;
+  user-select: none;
+  -webkit-user-drag: none;
+  transition: transform 0.25s ease, right 0.25s ease;
+  z-index: 10;
+}
+
+/* LINE PART */
+#next-btn .arrow-line {
+  width: 60px;
+  height: 4px;
+  background: #ff2ec6;
+  border-radius: 2px;
+  box-shadow:
+    0 0 6px #ff2ec6,
+    0 0 12px #ff2ec6,
+    0 0 20px rgba(255,255,255,0.6), 
+    0 0 30px rgba(255,46,198,0.7);
+}
+
+/* HEAD (> shape) */
+#next-btn .arrow-head {
+  width: 18px;
+  height: 18px;
+  border-right: 4px solid #ff2ec6;
+  border-bottom: 4px solid #ff2ec6;
+  transform: rotate(-45deg);
+  margin-left: -21px;
+  box-shadow:
+    0 0 px #ff2ec6,
+    0 0 12px rgba(255,255,255,0.6),
+    0 0 18px rgba(255,46,198,0.7);
+}
+
+/* HOVER = Slide & Shine */
+#next-btn:hover {
+  right: 30px;
+  transform: scale(1.08);
+  filter: brightness(1.3);
+}
+</style>
+</head>
+
+<body>
+
+<div id="bg"></div>
+<div class="hearts-left"></div>
+<div class="hearts-right"></div>
+
+<!-- LYRICS -->
+<div id="lyrics-mask">
+  <div id="lyrics-container">
+    <div id="lyric-prev" class="lyric faded"></div>
+    <div id="lyric-current" class="lyric active"></div>
+    <div id="lyric-next" class="lyric faded"></div>
+  </div>
+</div>
+
+<!-- PLAYER -->
+<div id="player-area">
+  <div id="player-stack">
+    <div id="circle-wrap">
+      <div id="circle">
+        <svg id="play" viewBox="0 0 24 24"><polygon points="6,4 20,12 6,20" fill="white"/></svg>
+        <svg id="pause" viewBox="0 0 24 24" style="display:none;">
+          <rect x="6" y="4" width="4" height="16" fill="white"/>
+          <rect x="14" y="4" width="4" height="16" fill="white"/>
+        </svg>
+      </div>
+    </div>
+
+    <div id="line-stack">
+      <div class="line"></div>
+      <div class="gap"></div>
+      <div id="bar-row">
+        <div id="bar">
+          <div id="fill"></div>
+          <div id="knob"></div>
+        </div>
+        <div id="time">0:00 / 0:17</div>
+      </div>
+      <div class="gap"></div>
+      <div class="line"></div>
+    </div>
+  </div>
+</div>
+
+<audio id="audio" src="audio/Sawaal.mp3"></audio>
+<div id="next-btn">
+  <div class="arrow-line"></div>
+  <div class="arrow-head"></div>
+</div>
+
+
+<script>
+/* ========== LYRICS SCRIPT ========== */
+const lyrics=[
+{time:0,text:"Ye Jahan khi Najar tujhe laga na De"},
+{time:4,text:"Tere baare mein jo Yaar Baithe"},
+{time:6,text:"Likhne Hum Kabhi"},
+{time:7,text:"100 Kataren To"},
+{time:8,text:"Kitabon Ki lagai De"},
+{time:11,text:"Tumko Kaise Pr Batayen ki"},
+{time:13,text:"Kitaben Kitni Bhi"},
+{time:14,text:"Teri Khubiyan"},
+{time:16,text:"Kabhi Bhi Na Gina Sake"}
+];
+
+const LEND=17;
+const audio=document.getElementById("audio");
+let currentIndex=-1;
+const prev=document.getElementById("lyric-prev");
+const cur=document.getElementById("lyric-current");
+const next=document.getElementById("lyric-next");
+
+function fmt(sec){let m=Math.floor(sec/60),s=Math.floor(sec%60);return m+":"+(s<10?"0"+s:s);}
+
+audio.addEventListener("timeupdate",()=>{
+  const t=Math.floor(audio.currentTime);
+  const idx=lyrics.findIndex((l,i)=>t>=l.time && (i===lyrics.length-1||t<lyrics[i+1].time));
+  if(idx!==currentIndex && t<=LEND){
+    currentIndex=idx;
+    prev.innerText=lyrics[idx-1]?.text||"";
+    cur.innerText=lyrics[idx]?.text||"";
+    next.innerText=lyrics[idx+1]?.text||"";
+    prev.className="lyric faded";
+    cur.className="lyric active";
+    next.className="lyric faded";
+    prev.style.transform="translateY(-40px) scale(.88)";
+    cur.style.transform="translateY(0) scale(1)";
+    next.style.transform="translateY(40px) scale(.88)";
+  }
+});
+
+/* ========== PLAYER SCRIPT ========== */
+const playBtn=document.getElementById("circle");
+const playIcon=document.getElementById("play");
+const pauseIcon=document.getElementById("pause");
+const fill=document.getElementById("fill");
+const knob=document.getElementById("knob");
+const timeDisplay=document.getElementById("time");
+const duration=LEND;
+let isPlaying=false;
+
+/* SMOOTH UPDATE */
+function smoothUpdate() {
+  if(isPlaying){
+    const p = duration > 0 ? audio.currentTime / duration : 0;
+    fill.style.width = (p * 100) + "%";
+    knob.style.left = (p * 100) + "%";
+  }
+  requestAnimationFrame(smoothUpdate);
+}
+smoothUpdate();
+
+/* PLAY / PAUSE */
+playBtn.onclick=()=>{
+  if(audio.paused){
+    audio.play();
+    isPlaying = true;
+    playIcon.style.display="none";
+    pauseIcon.style.display="block";
+  }else{
+    audio.pause();
+    isPlaying = false;
+    pauseIcon.style.display="none";
+    playIcon.style.display="block";
+  }
+};
+
+/* TIME DISPLAY */
+audio.addEventListener("timeupdate",()=>{
+  timeDisplay.textContent=fmt(audio.currentTime)+" / 0:17";
+});
+
+/* RESET ON END */
+audio.addEventListener("ended",()=>{
+  isPlaying=false;
+  audio.currentTime=0;
+  fill.style.width="0%";
+  knob.style.left="0%";
+  timeDisplay.textContent="0:00 / 0:17";
+  pauseIcon.style.display="none";
+  playIcon.style.display="block";
+  currentIndex=-1;
+});
+
+/* SEEK */
+document.getElementById("bar").onclick=e=>{
+  const r=e.target.getBoundingClientRect();
+  const x=e.clientX-r.left;
+  const p=x/r.width;
+  audio.currentTime=p*duration;
+};
+
+/* ========== HEARTS SCRIPT ========== */
+function drawSolidHeart(canvas, size=40, color="#ff2d2d") {
+  const ctx=canvas.getContext("2d");
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  ctx.save();
+  ctx.translate(canvas.width/2,canvas.height/2);
+  ctx.beginPath();
+  ctx.moveTo(0,size*0.3);
+  ctx.bezierCurveTo(size*0.6,size*-0.4,size*1.4,size*0.4,0,size*1.1);
+  ctx.bezierCurveTo(-size*1.4,size*0.4,-size*0.6,size*-0.4,0,size*0.3);
+  ctx.fillStyle=color;
+  ctx.shadowColor=color;
+  ctx.shadowBlur=15;
+  ctx.fill();
+  ctx.restore();
+}
+
+function spawnHeart(side) {
+  const canvas=document.createElement("canvas");
+  canvas.width=96; canvas.height=96;
+  canvas.style.position="absolute";
+  canvas.style.pointerEvents="none";
+  canvas.style.zIndex=1;
+  drawSolidHeart(canvas,35,"#ff2d2d");
+  const zoneW=window.innerWidth*0.25;
+  const x=Math.random()*zoneW;
+  const duration=8000+Math.random()*6000;
+  const drift=Math.random()*40-20;
+  canvas.style.left=x+"px";
+  canvas.style.top="-120px";
+  document.querySelector(side==="left"?".hearts-left":".hearts-right").appendChild(canvas);
+  const start=performance.now();
+  function animate(t){
+    const p=(t-start)/duration;
+    if(p<1){
+      const y=p*(window.innerHeight+200);
+      canvas.style.transform=
+      `translateY(${y}px) translateX(${p*drift}px) rotate(${p*360}deg)`;
+      requestAnimationFrame(animate);
+    } else canvas.remove();
+  }
+  requestAnimationFrame(animate);
+}
+
+setInterval(()=>{
+  spawnHeart("left");
+  spawnHeart("right");
+},1500);
+
+document.getElementById("next-btn").onclick = () => {
+  window.location.href = "page2.html";
+};
+
+</script>
+
+</body>
+</html>
