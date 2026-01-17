@@ -23,7 +23,7 @@ window.lastIsSaveState = false;
 
 const musicOptions = [
     { value: 'audio/happy-birthday.mp3', label: 'KHAT: BY NAVJOT AHUJA' },
-    { value: 'audio/happybirthday.mp3', label: 'Happy Birthday (Phiên bản 2)' },
+    { value: 'audio/Sawaal.mp3', label: 'Happy Birthday (Phiên bản 2)' },
     { value: 'audio/happybirthday_domixi.mp3', label: 'Happy Birthday (Độ Mixi)' },
     { value: 'audio/happybirtday_uia.mp3', label: 'Happy Birthday (Mèo UIA)' },
     { value: 'audio/music.mp3', label: 'Happy Birthday (Instrumental)' },
